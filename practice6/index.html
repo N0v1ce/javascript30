@@ -21,6 +21,7 @@ const cities = [];
 fetch(endpoint)
   .then(blob => blob.json())
   .then(data => cities.push(...data));
+// console.log(cities);
 
 function returnMatchesArray(keyword, source){
   return source.filter(place => {
@@ -29,7 +30,32 @@ function returnMatchesArray(keyword, source){
   });
 }
 
-function 
+function numberWithCommas(x){
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function displayResult(){
+  const matchArray = returnMatchesArray(this.value, cities);
+  const result = matchArray.map(place => {
+    const regEx = new RegExp(this.value, 'gi');
+    const hightlightCity = place.city.replace(regEx, `<span class="hl">${this.value}</span>`);
+    const hightlightstate = place.state.replace(regEx, `<span class="hl">${this.value}</span>`)
+    return `
+    <li>
+      <span class="name">${hightlightCity}, ${hightlightstate}</span>
+      <span class="population">${numberWithCommas(place.population)}</span>
+    </li>
+    `;
+  }).join('');
+  suggestions.innerHTML = result;
+}
+
+const searchInput = document.querySelector(".search");
+const suggestions = document.querySelector(".suggestions");
+
+searchInput.addEventListener("change", displayResult);
+searchInput.addEventListener("keyup", displayResult);
+
 
 </script>
   </body>
